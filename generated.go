@@ -9,6 +9,18 @@ import (
 	"github.com/Khan/genqlient/graphql"
 )
 
+// __getOrganizationInput is used internally by genqlient
+type __getOrganizationInput struct {
+	Login  string `json:"Login"`
+	Number int    `json:"Number"`
+}
+
+// GetLogin returns __getOrganizationInput.Login, and is useful for accessing the field via an interface.
+func (v *__getOrganizationInput) GetLogin() string { return v.Login }
+
+// GetNumber returns __getOrganizationInput.Number, and is useful for accessing the field via an interface.
+func (v *__getOrganizationInput) GetNumber() int { return v.Number }
+
 // __getUserInput is used internally by genqlient
 type __getUserInput struct {
 	Login string `json:"Login"`
@@ -16,6 +28,48 @@ type __getUserInput struct {
 
 // GetLogin returns __getUserInput.Login, and is useful for accessing the field via an interface.
 func (v *__getUserInput) GetLogin() string { return v.Login }
+
+// getOrganizationOrganization includes the requested fields of the GraphQL type Organization.
+// The GraphQL type's documentation follows.
+//
+// An account on GitHub, with one or more owners, that has repositories, members and teams.
+type getOrganizationOrganization struct {
+	// Find a project by number.
+	ProjectV2 getOrganizationOrganizationProjectV2 `json:"projectV2"`
+}
+
+// GetProjectV2 returns getOrganizationOrganization.ProjectV2, and is useful for accessing the field via an interface.
+func (v *getOrganizationOrganization) GetProjectV2() getOrganizationOrganizationProjectV2 {
+	return v.ProjectV2
+}
+
+// getOrganizationOrganizationProjectV2 includes the requested fields of the GraphQL type ProjectV2.
+// The GraphQL type's documentation follows.
+//
+// New projects that manage issues, pull requests and drafts using tables and boards.
+type getOrganizationOrganizationProjectV2 struct {
+	// The Node ID of the ProjectV2 object
+	Id string `json:"id"`
+	// The project's name.
+	Title string `json:"title"`
+}
+
+// GetId returns getOrganizationOrganizationProjectV2.Id, and is useful for accessing the field via an interface.
+func (v *getOrganizationOrganizationProjectV2) GetId() string { return v.Id }
+
+// GetTitle returns getOrganizationOrganizationProjectV2.Title, and is useful for accessing the field via an interface.
+func (v *getOrganizationOrganizationProjectV2) GetTitle() string { return v.Title }
+
+// getOrganizationResponse is returned by getOrganization on success.
+type getOrganizationResponse struct {
+	// Lookup a organization by login.
+	Organization getOrganizationOrganization `json:"organization"`
+}
+
+// GetOrganization returns getOrganizationResponse.Organization, and is useful for accessing the field via an interface.
+func (v *getOrganizationResponse) GetOrganization() getOrganizationOrganization {
+	return v.Organization
+}
 
 // getUserResponse is returned by getUser on success.
 type getUserResponse struct {
@@ -68,6 +122,46 @@ func (v *getViewerViewerUser) GetMyName() string { return v.MyName }
 
 // GetCreatedAt returns getViewerViewerUser.CreatedAt, and is useful for accessing the field via an interface.
 func (v *getViewerViewerUser) GetCreatedAt() time.Time { return v.CreatedAt }
+
+// The query or mutation executed by getOrganization.
+const getOrganization_Operation = `
+query getOrganization ($Login: String!, $Number: Int!) {
+	organization(login: $Login) {
+		projectV2(number: $Number) {
+			id
+			title
+		}
+	}
+}
+`
+
+func getOrganization(
+	ctx context.Context,
+	client graphql.Client,
+	Login string,
+	Number int,
+) (*getOrganizationResponse, error) {
+	req := &graphql.Request{
+		OpName: "getOrganization",
+		Query:  getOrganization_Operation,
+		Variables: &__getOrganizationInput{
+			Login:  Login,
+			Number: Number,
+		},
+	}
+	var err error
+
+	var data getOrganizationResponse
+	resp := &graphql.Response{Data: &data}
+
+	err = client.MakeRequest(
+		ctx,
+		req,
+		resp,
+	)
+
+	return &data, err
+}
 
 // The query or mutation executed by getUser.
 const getUser_Operation = `

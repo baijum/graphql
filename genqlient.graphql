@@ -12,3 +12,12 @@ query getUser($Login: String!) {
     createdAt
   }
 }
+
+query getOrganization($Login: String!, $Number: Int!){
+    organization(login: $Login){
+      projectV2(number: $Number) {
+        id
+        title
+      }
+    }
+  }

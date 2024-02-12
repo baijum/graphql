@@ -42,27 +42,36 @@ func main() {
 	}
 	graphqlClient := graphql.NewClient("https://api.github.com/graphql", &httpClient)
 
-	switch len(os.Args) {
-	case 1:
-		var viewerResp *getViewerResponse
-		viewerResp, err = getViewer(context.Background(), graphqlClient)
-		if err != nil {
-			return
-		}
-		fmt.Println("you are", viewerResp.Viewer.MyName, "created on", viewerResp.Viewer.CreatedAt.Format("2006-01-02"))
-
-	case 2:
-		username := os.Args[1]
-		var userResp *getUserResponse
-		userResp, err = getUser(context.Background(), graphqlClient, username)
-		if err != nil {
-			return
-		}
-		fmt.Println(username, "is", userResp.User.TheirName, "created on", userResp.User.CreatedAt.Format("2006-01-02"))
-
-	default:
-		err = fmt.Errorf("usage: %v [username]", os.Args[0])
+	var orgResponse *getOrganizationResponse
+	orgResponse, err = getOrganization(context.Background(), graphqlClient, "redhat-developer", 16)
+	if err != nil {
+		return
 	}
+	fmt.Printf("Org: %#v", orgResponse)
+
+	/*
+		switch len(os.Args) {
+		case 1:
+			var viewerResp *getViewerResponse
+			viewerResp, err = getViewer(context.Background(), graphqlClient)
+			if err != nil {
+				return
+			}
+			fmt.Println("you are", viewerResp.Viewer.MyName, "created on", viewerResp.Viewer.CreatedAt.Format("2006-01-02"))
+
+		case 2:
+			username := os.Args[1]
+			var userResp *getUserResponse
+			userResp, err = getUser(context.Background(), graphqlClient, username)
+			if err != nil {
+				return
+			}
+			fmt.Println(username, "is", userResp.User.TheirName, "created on", userResp.User.CreatedAt.Format("2006-01-02"))
+
+		default:
+			err = fmt.Errorf("usage: %v [username]", os.Args[0])
+		}
+	*/
 }
 
 //go:generate go run github.com/Khan/genqlient genqlient.yaml
