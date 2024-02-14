@@ -13,11 +13,36 @@ query getUser($Login: String!) {
   }
 }
 
-query getOrganization($Login: String!, $Number: Int!){
-    organization(login: $Login){
-      projectV2(number: $Number) {
-        id
-        title
+query getOrganization(){
+  node(id: "PVT_kwDOAKhcm84AFgmD") {
+    ... on ProjectV2 {
+      fields(first: 20) {
+        nodes {
+          ... on ProjectV2Field {
+            id
+            name
+          }
+          ... on ProjectV2IterationField {
+            id
+            name
+            configuration {
+              iterations {
+                startDate
+                id
+              }
+            }
+          }
+          ... on ProjectV2SingleSelectField {
+            id
+            name
+            options {
+              id
+              name
+            }
+          }
+        }
       }
     }
   }
+}
+

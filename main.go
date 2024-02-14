@@ -43,12 +43,13 @@ func main() {
 	graphqlClient := graphql.NewClient("https://api.github.com/graphql", &httpClient)
 
 	var orgResponse *getOrganizationResponse
-	orgResponse, err = getOrganization(context.Background(), graphqlClient, "redhat-developer", 16)
+	orgResponse, err = getOrganization(context.Background(), graphqlClient)
 	if err != nil {
 		return
 	}
 	fmt.Printf("Org: %#v", orgResponse)
 
+	orgResponse.GetNode().implementsGraphQLInterfacegetOrganizationNode().
 	/*
 		switch len(os.Args) {
 		case 1:
